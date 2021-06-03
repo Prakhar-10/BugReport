@@ -1,10 +1,12 @@
 const puppeteer = require("puppeteer");
-// const request = require("request");
-// const cheerio = require("cheerio");
 const getBugs = require("./bugs");
 const id = "randomaccount7" ;
 const pw = "random_71" ;
 const search = "pyppeteer/pyppeteer";
+const title = "Leak in browser.close()";
+const text = "There is a leak in browser.close()";
+
+
 
 
 async function login(){
@@ -58,9 +60,20 @@ async function login(){
   bugs = "https://github.com" + bugs;
   
   await tab.goto(bugs);
+  await tab.waitForSelector('.ml-3.d-flex.flex-justify-between.width-full.width-md-auto');
+  await tab.click('.ml-3.d-flex.flex-justify-between.width-full.width-md-auto');
+
+  await tab.waitForSelector('.form-control.input-lg.input-block.input-contrast.required.title.js-session-resumable.js-quick-submit');
+  await tab.type('.form-control.input-lg.input-block.input-contrast.required.title.js-session-resumable.js-quick-submit',title);
+  await tab.type('#issue_body',text);
+  let submit = await tab.$$('.btn.btn-primary');
+  await submit[1].click('.btn.btn-primary');
+
 
   await tab.waitForTimeout(1000);
   await getBugs(bugs);
+  
+
   
 }
 login(); 
